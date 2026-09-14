@@ -15045,7 +15045,9 @@ diff --git a/src/lib.rs b/src/lib.rs
 
     fn init_git_repo(path: &Path) -> Result<()> {
         fs::create_dir_all(path)?;
-        run_git(path, &["init", "-q"])?;
+        // Pin the default branch: git's init.defaultBranch varies by
+        // machine (master on some Linux hosts), and tests push main.
+        run_git(path, &["init", "-q", "-b", "main"])?;
         run_git(path, &["config", "user.name", "ECC Tests"])?;
         run_git(path, &["config", "user.email", "ecc-tests@example.com"])?;
         fs::write(path.join("README.md"), "hello\n")?;

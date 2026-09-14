@@ -1613,10 +1613,14 @@ fn base_checkout_path(worktree: &WorktreeInfo) -> Result<PathBuf> {
         }
     }
 
-    fallback.context(format!(
-        "Failed to locate base checkout for {} from git worktree list",
-        worktree.base_branch
-    ))
+    if let Some(path) = fallback {
+        return Ok(path);
+    }
+
+    // No dedicated base checkout exists: the base branch is checked out
+    // in this worktree itself, so resolve against its own repository
+    // root. Git accepts any worktree for remote and ref lookups.
+    Ok(worktree.path.clone())
 }
 
 #[cfg(test)]
